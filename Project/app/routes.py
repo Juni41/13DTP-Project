@@ -1,7 +1,8 @@
 from app import app
-from flask import render_template, abort, request
+from flask import render_template, abort, request, redirect, url_for
 from flask_sqlalchemy import SQLALCHEMY
 import os
+import random
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 db = SQLAlchemy()
@@ -13,6 +14,10 @@ import app.models as models
 app.route('/')
 def layout():
     return render_template("layout.html")
+
+app.route('/home')
+def homepage():
+    return render_template("home.html")
 
 @app.errorhandler(404)
 def page_not_found(e):
