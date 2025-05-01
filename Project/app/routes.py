@@ -12,11 +12,11 @@ db.init_app(app)
 #import app.models as models
 
 
-app.route('/')
+@app.route('/')
 def layout():
     return render_template("layout.html")
 
-app.route('/home')
+@app.route('/home')
 def homepage():
     return render_template("home.html")
 
