@@ -9,7 +9,7 @@ db = SQLAlchemy()
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, "draft.db")
 db.init_app(app)
 
-#import app.models as models
+import app.models as models
 
 
 @app.route('/')
