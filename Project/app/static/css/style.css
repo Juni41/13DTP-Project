@@ -1,6 +1,21 @@
 /* Footer styles */
-.footer {
+.footer-content {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    max-width: 1000px;
+    margin: auto;
+    padding: 0 20px;
+}
+
+.site-footer {
+    padding: 40px 0 20px;
     text-align: center;
-    padding: 20px 0; 
-    position:sticky;
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 20px;
+    font-size: 14px;
+    color: #aaa;
 }
