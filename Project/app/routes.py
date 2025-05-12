@@ -1,16 +1,6 @@
-from app import app
+from app import app, db  
 from flask import render_template, abort, request, redirect, url_for
-from flask_sqlalchemy import SQLAlchemy
-import os
-import random
-
-basedir = os.path.abspath(os.path.dirname(__file__))
-db = SQLAlchemy()
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, "draft.db")
-db.init_app(app)
-
-#import app.models as models
-
+from app.models import Player, Match, Court, CourtPlayer
 
 @app.route('/')
 def layout():
@@ -19,6 +9,22 @@ def layout():
 @app.route('/home')
 def homepage():
     return render_template("home.html")
+
+@app.route('/draft')
+def draft():
+    players = Player.query.all()
+    return render_template('draft.html', players=players)
+
+@app.route('/add_player', methods=['POST'])
+def add_player():
+    name = request.form['name']
+    skill = request.form['skill']
+    gender = request.form['gender']
+    
+    new_player = Player(name=name, skill=skill, gender=gender)
+    db.session.add(new_player)
+    db.session.commit()
+    return redirect(url_for('draft'))
 
 @app.errorhandler(404)
 def page_not_found(e):
