@@ -5,30 +5,44 @@
 </head>
 <body>
     <h1>Player Draft</h1>
-
+    {% if players %}
+            <div class="stats"
+                <h3>stats</h3>
+                <p><strong>Total Players:</strong> {{ players|length }}</p>
+                <p><strong>Courts Possible:</strong> {{ (players|length // 4) }} (need 4 players per court)</p>
+            </div>
+        {% endif %}
+        
     <h2>Add New Player</h2>
-    <form action="{{ url_for('add_player') }}" method="POST">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required><br>
-
-        <label for="skill">Skill Level:</label>
-        <select id="skill" name="skill" required>
-            <option value="">Select Skill</option>
-            <option value="Beginner">Beginner</option>
-            <option value="Intermediate">Intermediate</option>
-            <option value="Advanced">Advanced</option>
-        </select><br>
-
-        <label for="gender">Gender:</label>
-        <select id="gender" name="gender" required>
-            <option value="">Select Gender</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
-        </select><br>
-
-        <button type="submit">Add Player</button>
-    </form>
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            
+            <div class="form-group">
+                {{ form.name.label(class="form-label") }}
+                {{ form.name(class="form-input") }}
+                {% for error in form.name.errors %}
+                    <div class="error-text">{{ error }}</div>
+                {% endfor %}
+            </div>
+            
+            <div class="form-group">
+                {{ form.skill.label(class="form-label") }}
+                {{ form.skill(class="form-select") }}
+                {% for error in form.skill.errors %}
+                    <div class="error-text">{{ error }}</div>
+                {% endfor %}
+            </div>
+            
+            <div class="form-group">
+                {{ form.gender.label(class="form-label") }}
+                {{ form.gender(class="form-select") }}
+                {% for error in form.gender.errors %}
+                    <div class="error-text">{{ error }}</div>
+                {% endfor %}
+            </div>
+            
+            {{ form.submit(class="btn btn-primary") }}
+        </form>
 
     <h2>Current Players</h2>
     {% if players %}
@@ -38,7 +52,7 @@
             {% endfor %}
         </ul>
     {% else %}
-        <p>No players added yet.</p>
+        <p>WHERE ARE THE PLAYERS AAOGAHELEIUGHLIWUEHGLIWEU.</p>
     {% endif %}
 </body>
 </html>
