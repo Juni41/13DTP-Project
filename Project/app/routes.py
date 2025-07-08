@@ -30,23 +30,13 @@ def draft():
     
     return render_template('draft.html', players=players, form=form)
 
-
-#@app.route('/add_player', methods=['GET', 'POST'])
-#def add_player():
-    form = PlayerForm()
-    
-    if form.validate_on_submit():
-        new_player = Player(
-            name=form.name.data,
-            skill=form.skill.data,
-            gender=form.gender.data
-        )
-        db.session.add(new_player)
-        db.session.commit()
-        return redirect(url_for('draft'))
-    
-    return render_template('add_player.html', form=form)
-
+@app.route('/delete_player/<int:player_id>', methods=['POST'])
+def delete_player(player_id):
+    player = Player.query.get_or_404(player_id)
+    player_name = player.name
+    db.session.delete(player)
+    db.session.commit()
+    return redirect(url_for('draft'))
 
 @app.errorhandler(404)
 def page_not_found(e):

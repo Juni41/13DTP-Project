@@ -8,7 +8,7 @@
     {% if players %}
             <div class="stats"
                 <h3>stats</h3>
-                <p><strong>Total Players:</strong> {{ players|length }}</p>
+                <p><strong>Players Entered:</strong> {{ players|length }}</p>
                 <p><strong>Courts Possible:</strong> {{ (players|length // 4) }} (need 4 players per court)</p>
             </div>
         {% endif %}
@@ -44,13 +44,25 @@
             {{ form.submit(class="btn btn-primary") }}
         </form>
 
-    <h2>Current Players</h2>
-    {% if players %}
-        <ul>
-            {% for player in players %}
-                <li>{{ player.name }} - {{ player.skill }} - {{ player.gender }}</li>
-            {% endfor %}
-        </ul>
+ <div class="player-list">
+            <h2>Current Players</h2>
+            {% if players %}
+                {% for player in players %}
+                    <div class="player-container">
+                        <div class="player-info">
+                            <span class="player-name">{{ player.name }}</span>
+                            <span class="player-skill">Skill: {{ player.skill|title }}</span>
+                            <span class="player-gender">Gender: {{ player.gender|title }}</span>
+                        </div>
+                        <form method="POST" action="{{ url_for('delete_player', player_id=player.id) }}" style="display: inline;">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                            <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to delete {{ player.name }}?')">
+                                Delete
+                            </button>
+                        </form>
+                    </div>
+                {% endfor %}
+                
     {% else %}
         <p>WHERE ARE THE PLAYERS AAOGAHELEIUGHLIWUEHGLIWEU.</p>
     {% endif %}
