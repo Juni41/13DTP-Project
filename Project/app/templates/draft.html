@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Badminton Draft</title>
+    <link rel="stylesheet" href="/app/static/css/style.css">
 </head>
 <body>
     <h1>Player Draft</h1>
@@ -62,9 +63,24 @@
                         </form>
                     </div>
                 {% endfor %}
-                
-    {% else %}
-        <p>WHERE ARE THE PLAYERS AAOGAHELEIUGHLIWUEHGLIWEU.</p>
-    {% endif %}
+
+                 <div>
+                    {% if players|length >= 4 %}
+                        <a href="{{ url_for('generate_matches') }}">
+                            Generate Matches
+                        </a>
+                    {% endif %}
+                    <a href="{{ url_for('view_matches') }}">
+                        View Matches
+                    </a>
+                </div>
+            {% else %}
+                <div class="players-missing">
+                    <p>No players added yet.</p>
+                    <p>Add at least 4 players to start generating matches!</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
 </body>
 </html>

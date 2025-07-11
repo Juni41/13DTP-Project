@@ -1,3 +1,23 @@
+/* Universal Styles */
+body {
+    margin: 20px;
+}
+
+/* Player Drafting Form */
+.player-list {
+    margin-top: 30px;
+}
+
+.player-info {
+    display: flex;
+    gap: 20px;
+ }
+
+ .players-missing {
+    text-align: center;
+    padding: 20px;
+ }
+
 /* Footer styles */
 .footer-content {
     display: flex;
@@ -19,3 +39,4 @@
     font-size: 14px;
     color: #aaa;
 }
+/* About Page Styles */
