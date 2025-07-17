@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, SubmitField, IntegerField
+from wtforms import StringField, SelectField, SubmitField, IntegerField, RadioField
 from wtforms.validators import DataRequired, Length
 
 class PlayerForm(FlaskForm):
@@ -18,7 +18,7 @@ class PlayerForm(FlaskForm):
 
 class MatchForm(FlaskForm):
     num_courts = IntegerField('Number of Courts', validators=[DataRequired()])
-    method = SelectField('Sorting Method', choices=[
+    method = RadioField('Sorting Method', choices=[
         ('random', 'Random'),
         ('skill', 'Balance by Skill'),
         ('gender', 'Balance by Gender')

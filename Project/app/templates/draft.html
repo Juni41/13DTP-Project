@@ -7,7 +7,7 @@
 <body>
     <h1>Player Draft</h1>
     {% if players %}
-            <div class="stats"
+            <div class="stats">
                 <h3>stats</h3>
                 <p><strong>Players Entered:</strong> {{ players|length }}</p>
                 <p><strong>Courts Possible:</strong> {{ (players|length // 4) }} (need 4 players per court)</p>
@@ -55,7 +55,7 @@
                             <span class="player-skill">Skill: {{ player.skill|title }}</span>
                             <span class="player-gender">Gender: {{ player.gender|title }}</span>
                         </div>
-                        <form method="POST" action="{{ url_for('delete_player', player_id=player.id) }}" style="display: inline;">
+                        <form method="POST" action="{{ url_for('delete_player', player_id=player.id) }}">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                             <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to delete {{ player.name }}?')">
                                 Delete
@@ -66,13 +66,13 @@
 
                  <div>
                     {% if players|length >= 4 %}
-                        <a href="{{ url_for('generate_matches') }}">
-                            Generate Matches
-                        </a>
+                        <form method="POST" action="{{ url_for('generate_matches') }}">
+                         {{ form.hidden_tag() }}
+                         <input type="hidden" name="num_courts" value="{{ players|length // 4 }}">
+                         <input type="hidden" name="method" value="random">
+                         <button type="submit" class="btn btn-primary">Generate Matches</button>
+                    </form>
                     {% endif %}
-                    <a href="{{ url_for('view_matches') }}">
-                        View Matches
-                    </a>
                 </div>
             {% else %}
                 <div class="players-missing">
