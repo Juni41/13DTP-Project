@@ -18,6 +18,8 @@ body {
     padding: 20px;
  }
 
+ /* Player Match Display */
+ 
 /* Footer styles */
 .footer-content {
     display: flex;
@@ -40,3 +42,12 @@ body {
     color: #aaa;
 }
 /* About Page Styles */
+
+/* Nav Styles */
+.nav-style {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    list-style-type: none;
+    padding: 0;
+}

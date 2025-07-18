@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Generated Matches</title>
+    <link rel="stylesheet" href="/app/static/css/style.css">
+</head>
+<body>
+    <h1>Generated Matches</h1>
+
+    {% if matches %}
+        {% for match in matches %}
+            {% for court in match.courts %}
+                <ul class="court">
+                    <li class="court-title">Court {{ court.id }}</li>
+                    {% set players = court.court_players %}
+                    <li class="team">Team 1:
+                        {{ players[0].player.name if players|length > 0 else '—' }} &
+                        {{ players[1].player.name if players|length > 1 else '—' }}
+                    </li>
+                    <li class="team">Team 2:
+                        {{ players[2].player.name if players|length > 2 else '—' }} &
+                        {{ players[3].player.name if players|length > 3 else '—' }}
+                    </li>
+                </ul>
+            {% endfor %}
+        {% endfor %}
+    {% else %}
+        <p>No matches have been generated.</p>
+    {% endif %}
+
+</body>
+</html>
