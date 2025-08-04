@@ -7,7 +7,7 @@ class Player(db.Model):
     skill = db.Column(db.String(20), nullable=False)
     gender = db.Column(db.String(10), nullable=False)
 
-    court_players = db.relationship('CourtPlayer', back_populates='player')
+    court_players = db.relationship('CourtPlayer', back_populates='player', cascade='all, delete-orphan')
 
 class Match(db.Model):
     id = db.Column(db.Integer, primary_key=True)
