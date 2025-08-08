@@ -2,14 +2,11 @@ from app import app, db
 from flask import render_template, abort, request, redirect, url_for
 from app.models import Player, Match, Court, CourtPlayer
 from app.forms import PlayerForm, MatchForm
+from sqlalchemy import case
 import random 
 
 @app.route('/')
 def layout():
-    return render_template("layout.html")
-
-@app.route('/home')
-def homepage():
     return render_template("home.html")
 
 @app.route('/about')
@@ -18,9 +15,24 @@ def about():
 
 @app.route('/draft', methods=['GET', 'POST'])
 def draft():
-    form = PlayerForm()
-    players = Player.query.all()
+    form = PlayerForm()  
+    # Get the sorting parameter from url/request
+    sort_by = request.args.get('sort_by', 'id') 
 
+    if sort_by == 'gender':
+        players_query = Player.query.order_by(Player.gender) # Order players by the gender
+    elif sort_by == 'skill':
+        skill_order = case( # Sort order for skill levels
+            (Player.skill == 'Beginner', 1),
+            (Player.skill == 'Intermediate', 2),
+            (Player.skill == 'Advanced', 3),
+        )
+        players_query = Player.query.order_by(skill_order)
+    else:
+        # Default sort by id
+        players_query = Player.query.order_by(Player.id)
+    players = players_query.all()
+    
     if form.validate_on_submit():
         db.session.add(Player(
             name=form.name.data,
@@ -28,9 +40,9 @@ def draft():
             gender=form.gender.data
         ))
         db.session.commit()
-        return redirect(url_for('draft'))
+        return redirect(url_for('draft', sort_by=sort_by))
 
-    return render_template('draft.html', players=players, form=form)
+    return render_template('draft.html', players=players, form=form, current_sort=sort_by)
 
 @app.route('/generate_matches', methods=['GET', 'POST'])
 def generate_matches():
