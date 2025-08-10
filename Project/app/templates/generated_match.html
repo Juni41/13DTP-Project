@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Generated Matches</title>
-    <link rel="stylesheet" href="/app/static/css/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
 
@@ -13,22 +13,37 @@
         {% for match in matches %}
             {% for court in match.courts %}
                 <ul class="court">
-                    <li class="court-title">Court {{ court.id }}</li>
-                    {% set players = court.court_players %}
-                    <li class="team">Team 1:
+                    <li class="court-title">Court {{ court.court_number }}</li>
+                    {% set players = court.court_players | sort(attribute='id') %}
+                    <li class="team"><strong>Team 1:</strong>
                         {{ players[0].player.name if players|length > 0 else '—' }} &
                         {{ players[1].player.name if players|length > 1 else '—' }}
                     </li>
-                    <li class="team">Team 2:
+                    <li class="team"><strong>Team 2:</strong>
                         {{ players[2].player.name if players|length > 2 else '—' }} &
                         {{ players[3].player.name if players|length > 3 else '—' }}
                     </li>
                 </ul>
             {% endfor %}
         {% endfor %}
+
+        {% if resting_players %}
+        <div class="resting-players">
+            <h3>Players on Rest</h3>
+            <ul>
+                {% for player in resting_players %}
+                    <li>{{ player.name }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
     {% else %}
-        <p>No matches have been generated.</p>
+        <p>No matches have been generated yet.!</p>
     {% endif %}
+
+    <br>
+    <a href="{{ url_for('draft') }}" class="btn">Back to Draft</a>
 
 </body>
 </html>

@@ -2,85 +2,118 @@
 <html>
 <head>
     <title>Badminton Draft</title>
-    <link rel="stylesheet" href="/app/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
     <h1>Player Draft</h1>
     {% if players %}
-            <div class="stats">
-                <h3>stats</h3>
-                <p><strong>Players Entered:</strong> {{ players|length }}</p>
-                <p><strong>Courts Possible:</strong> {{ (players|length // 4) }} (need 4 players per court)</p>
+        <div class="stats">
+            <h3>Stats</h3>
+            <p><strong>Players Entered:</strong> {{ players|length }} </p>
+            <p><strong>Maximum Courts Possible:</strong> {{ (players|length // 4) }} (need 4 players per court)</p>
+        </div>
+    {% endif %}
+    
+    <h2>Add New Player</h2>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        
+        <div class="form-group">
+            {{ form.name.label(class="form-label") }}
+            {{ form.name(class="form-input") }}
+            {% for error in form.name.errors %} {{# Validation error loop #}}
+                <div class="error-text">{{ error }}</div>
+            {% endfor %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.skill.label(class="form-label") }}
+            {{ form.skill(class="form-select") }}
+            {% for error in form.skill.errors %}
+                <div class="error-text">{{ error }}</div>
+            {% endfor %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.gender.label(class="form-label") }}
+            {{ form.gender(class="form-select") }}
+            {% for error in form.gender.errors %}
+                <div class="error-text">{{ error }}</div>
+            {% endfor %}
+        </div>
+        {{ form.submit(class="btn btn-primary") }}
+    </form>
+
+    <div class="player-list">
+        <h2>Current Players</h2>
+        
+        {% if players %}
+
+            <div class="sort-options">
+                <strong>Sort by:</strong>
+                <a href="{{ url_for('draft', sort_by='skill') }}" class="{{ 'active-sort' if current_sort == 'skill' else '' }}">
+                    <button>Skill Level</button>
+                </a> |
+                <a href="{{ url_for('draft', sort_by='gender') }}" class="{{ 'active-sort' if current_sort == 'gender' else '' }}">
+                    <button>Gender</button>
+                </a> |
+                <a href="{{ url_for('draft', sort_by='id') }}" class="{{ 'active-sort' if current_sort == 'id' else '' }}">
+                    <button>ID</button>
+                </a>
+            </div> <!-- sort-options -->
+
+            {% for player in players %}
+                <div class="player-container">
+                    <div class="player-info">
+                        <span class="player-name">{{ player.name }}</span>
+                        <span class="player-skill">Skill: {{ player.skill|title }}</span>
+                        <span class="player-gender">Gender: {{ player.gender|title }}</span>
+                    </div> <!-- player-info -->
+                    <form method="post" action="{{ url_for('delete_player', player_id=player.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to delete {{ player.name }}?')">
+                            Delete
+                        </button>
+                    </form>
+                </div> <!-- player-container -->
+            {% endfor %}
+
+            <div class="match-options">
+                <h3>Generate Match</h3>
+                <form method="POST" action="{{ url_for('generate_matches') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <input type="hidden" name="method" value="random">
+                    
+                    <div class="form-group">
+                    <label for="num_courts">Number of Courts (max {{ players|length // 4 }}):</label>
+                     <select name="num_courts" id="num_courts" required class="form-select">
+        
+              {% set max_courts = players|length // 4 %}
+        
+                {% for i in range(1, max_courts + 1) %}
+                    <option value="{{ i }}" {% if i == max_courts %}selected{% endif %}>
+                        {{ i }} court{% if i > 1 %}s{% endif %} ({{ i*4 }} players)
+                            </option>
+                             {% endfor %}
+                            </select>
+                        </div>
+                    <button type="submit" class="btn btn-primary">
+                        Generate Matches
+                    </button>
+                </form>
+                
+                {% if (players|length % 4) > 0 %}
+                    <p class="rest-notice">
+                        Note: {{ players|length % 4 }} player{% if (players|length % 4) > 1 %}s{% endif %} will be on rest
+                    </p>
+                {% endif %}
+            </div> <!-- match-options -->
+        {% else %}
+            <div class="players-missing">
+                <p>No players added yet.</p>
+                <p>need at least 4 players.</p>
             </div>
         {% endif %}
-        
-    <h2>Add New Player</h2>
-        <form method="POST">
-            {{ form.hidden_tag() }}
-            
-            <div class="form-group">
-                {{ form.name.label(class="form-label") }}
-                {{ form.name(class="form-input") }}
-                {% for error in form.name.errors %}
-                    <div class="error-text">{{ error }}</div>
-                {% endfor %}
-            </div>
-            
-            <div class="form-group">
-                {{ form.skill.label(class="form-label") }}
-                {{ form.skill(class="form-select") }}
-                {% for error in form.skill.errors %}
-                    <div class="error-text">{{ error }}</div>
-                {% endfor %}
-            </div>
-            
-            <div class="form-group">
-                {{ form.gender.label(class="form-label") }}
-                {{ form.gender(class="form-select") }}
-                {% for error in form.gender.errors %}
-                    <div class="error-text">{{ error }}</div>
-                {% endfor %}
-            </div>
-            
-            {{ form.submit(class="btn btn-primary") }}
-        </form>
-
- <div class="player-list">
-            <h2>Current Players</h2>
-            {% if players %}
-                {% for player in players %}
-                    <div class="player-container">
-                        <div class="player-info">
-                            <span class="player-name">{{ player.name }}</span>
-                            <span class="player-skill">Skill: {{ player.skill|title }}</span>
-                            <span class="player-gender">Gender: {{ player.gender|title }}</span>
-                        </div>
-                        <form method="POST" action="{{ url_for('delete_player', player_id=player.id) }}">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                            <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to delete {{ player.name }}?')">
-                                Delete
-                            </button>
-                        </form>
-                    </div>
-                {% endfor %}
-
-                 <div>
-                    {% if players|length >= 4 %}
-                        <form method="POST" action="{{ url_for('generate_matches') }}">
-                         {{ form.hidden_tag() }}
-                         <input type="hidden" name="num_courts" value="{{ players|length // 4 }}">
-                         <input type="hidden" name="method" value="random">
-                         <button type="submit" class="btn btn-primary">Generate Matches</button>
-                    </form>
-                    {% endif %}
-                </div>
-            {% else %}
-                <div class="players-missing">
-                    <p>No players added yet.</p>
-                    <p>Add at least 4 players to start generating matches!</p>
-                </div>
-            {% endif %}
-        </div>
     </div>
 </body>
 </html>

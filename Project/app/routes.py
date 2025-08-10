@@ -104,7 +104,9 @@ def create_matches(players, num_courts):
 @app.route('/matches')
 def view_matches():
     matches = Match.query.all()
-    return render_template('generated_match.html', matches=matches)
+    assigned_player_ids = db.session.query(CourtPlayer.player_id).subquery()
+    resting_players = Player.query.filter(Player.id.not_in(assigned_player_ids)).all()
+    return render_template('generated_match.html', matches=matches, resting_players=resting_players)
 
 @app.route('/delete_player/<int:player_id>', methods=['POST'])
 def delete_player(player_id):
