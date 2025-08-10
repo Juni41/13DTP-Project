@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Badminton Draft</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <h1>Player Draft</h1>
@@ -21,7 +21,7 @@
         <div class="form-group">
             {{ form.name.label(class="form-label") }}
             {{ form.name(class="form-input") }}
-            {% for error in form.name.errors %} {{# Validation error loop #}}
+            {% for error in form.name.errors %}
                 <div class="error-text">{{ error }}</div>
             {% endfor %}
         </div>
