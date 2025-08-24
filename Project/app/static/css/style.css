@@ -120,3 +120,19 @@ a:hover {
     list-style-type: none;
     padding: 0;
 }
+
+/* Error Page Styles */
+.error-container {
+    text-align: center;
+    margin: 5rem auto;
+    max-width: 600px;
+    padding: 2rem;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+ }
+
+ .error-container a {
+    margin-top: 1rem;
+    display: inline-block;
+}

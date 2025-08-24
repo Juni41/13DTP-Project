@@ -44,7 +44,7 @@ def draft():
 
     return render_template('draft.html', players=players, form=form, current_sort=sort_by)
 
-@app.route('/generate_matches', methods=['GET', 'POST'])
+@app.route('/generate_matches', methods=['POST'])
 def generate_matches():
     form = MatchForm()
 
@@ -101,7 +101,7 @@ def create_matches(players, num_courts):
 
     return matches
 
-@app.route('/matches')
+@app.route('/matches', methods=['GET'])
 def view_matches():
     matches = Match.query.all()
     assigned_player_ids = db.session.query(CourtPlayer.player_id).subquery()
@@ -118,3 +118,7 @@ def delete_player(player_id):
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template("404.html")
+
+@app.errorhandler(405)
+def method_not_allowed(e):
+    return render_template("405.html")
