@@ -101,6 +101,17 @@ def create_matches(players, num_courts):
 
     return matches
 
+@app.route('/set_winner/<int:court_id>/<int:team_number>', methods=['POST'])
+def set_winner(court_id, team_number):
+    court = Court.query.get_or_404(court_id) # Find the court in the database or return a 404 error if not found.
+
+    if court.winning_team is not None: # Check if a winner has already been set to prevent changes.
+        return redirect(url_for('view_matches'))
+
+    court.winning_team = team_number # Update the winning_team column with the provided team number (1 or 2).
+    db.session.commit()
+    return redirect(url_for('view_matches'))
+
 @app.route('/matches', methods=['GET'])
 def view_matches():
     matches = Match.query.all()

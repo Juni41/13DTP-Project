@@ -20,6 +20,7 @@ class Court(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     match_id = db.Column(db.Integer, db.ForeignKey('match.id'), nullable=False)
     court_number = db.Column(db.Integer, nullable=False) 
+    winning_team = db.Column(db.Integer, nullable=True)
     # Link to Match
     match = db.relationship('Match', back_populates='courts')
     # Each court has many players
