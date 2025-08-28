@@ -10,6 +10,7 @@ class Player(db.Model):
     court_players = db.relationship('CourtPlayer', back_populates='player', cascade='all, delete-orphan')
 
 class Match(db.Model):
+    __tablename__ = 'match'
     id = db.Column(db.Integer, primary_key=True)
     num_courts = db.Column(db.Integer, nullable=False)
 
@@ -17,6 +18,7 @@ class Match(db.Model):
     courts = db.relationship('Court', back_populates='match', cascade='all, delete-orphan')
 
 class Court(db.Model):
+    __tablename__ = 'court'
     id = db.Column(db.Integer, primary_key=True)
     match_id = db.Column(db.Integer, db.ForeignKey('match.id'), nullable=False)
     court_number = db.Column(db.Integer, nullable=False) 
@@ -27,6 +29,7 @@ class Court(db.Model):
     court_players = db.relationship('CourtPlayer', back_populates='court', cascade='all, delete-orphan')
 
 class CourtPlayer(db.Model):
+    __tablename__ = 'court_player'
     id = db.Column(db.Integer, primary_key=True)
     court_id = db.Column(db.Integer, db.ForeignKey('court.id'), nullable=False)
     player_id = db.Column(db.Integer, db.ForeignKey('player.id'), nullable=False)

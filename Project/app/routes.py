@@ -16,8 +16,7 @@ def about():
 @app.route('/draft', methods=['GET', 'POST'])
 def draft():
     form = PlayerForm()  
-    # Get the sorting parameter from url/request
-    sort_by = request.args.get('sort_by', 'id') 
+    sort_by = request.args.get('sort_by', 'id') # Get the sorting parameter from url/request
 
     if sort_by == 'gender':
         players_query = Player.query.order_by(Player.gender) # Order players by the gender
@@ -29,13 +28,12 @@ def draft():
         )
         players_query = Player.query.order_by(skill_order)
     else:
-        # Default sort by id
-        players_query = Player.query.order_by(Player.id)
+        players_query = Player.query.order_by(Player.id) # Default sort by id
     players = players_query.all()
     
     if form.validate_on_submit():
         db.session.add(Player(
-            name=form.name.data,
+            name=form.name.data.strip(),
             skill=form.skill.data,
             gender=form.gender.data
         ))
@@ -85,15 +83,15 @@ def create_matches(players, num_courts):
     available = list(players)
     matches = []
 
-    for court_num in range(1, num_courts + 1):
+    for court_num in range(1, num_courts + 1): 
         if len(available) < 4:
             break
 
-        selected = random.sample(available, 4)
-        for p in selected:
+        selected = random.sample(available, 4) # Randomly select 4 players from the list
+        for p in selected: # Make sure they cant be selected again
             available.remove(p)
 
-        matches.append({
+        matches.append({ # Create dictionary for the court and its teams
             'court': court_num,
             'team1': selected[:2],
             'team2': selected[2:]
@@ -115,8 +113,8 @@ def set_winner(court_id, team_number):
 @app.route('/matches', methods=['GET'])
 def view_matches():
     matches = Match.query.all()
-    assigned_player_ids = db.session.query(CourtPlayer.player_id).subquery()
-    resting_players = Player.query.filter(Player.id.not_in(assigned_player_ids)).all()
+    assigned_player_ids = db.session.query(CourtPlayer.player_id).subquery() # Get all player Ids that are assigned to courts
+    resting_players = Player.query.filter(Player.id.not_in(assigned_player_ids)).all() # Get all player Ids that are not assigned to courts
     return render_template('generated_match.html', matches=matches, resting_players=resting_players)
 
 @app.route('/delete_player/<int:player_id>', methods=['POST'])

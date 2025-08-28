@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <h1>Player Draft</h1>
     {% if players %}
         <div class="stats">
             <h3>Stats</h3>
@@ -61,14 +60,14 @@
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                         <input type="hidden" name="method" value="random">
                         
-                        <div class="form-group">
-                            <label for="num_courts">Number of Courts (max {{ players|length // 4 }}):</label>
-                            <select name="num_courts" id="num_courts" required class="form-select">
-                                {% set max_courts = players|length // 4 %}
+                       <div class="form-group">
+                    <label for="num_courts">Number of Courts (max {{ players|length // 4 }}):</label>
+                        <select name="num_courts" id="num_courts" required class="form-select">
+                            {% set max_courts = players|length // 4 %}
                                 {% for i in range(1, max_courts + 1) %}
-                                    <option value="{{ i }}" {% if i == max_courts %}selected{% endif %}>
-                                        {{ i }} court{% if i > 1 %}s{% endif %} ({{ i*4 }} players)
-                                    </option>
+                                <option value="{{ i }}" {% if i == max_courts %}selected{% endif %}>
+                                    {{ i }} court{% if i > 1 %}s{% endif %} ({{ i*4 }} players)
+                                </option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -114,7 +113,8 @@
                             </div> <!-- player-info -->
                             <form method="post" action="{{ url_for('delete_player', player_id=player.id) }}">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                                <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to delete {{ player.name }}?')">
+                                <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to delete {{ ' '.join(player.name.split()) }}?')">
+
                                     Delete
                                 </button>
                             </form>
