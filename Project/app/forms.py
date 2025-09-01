@@ -5,9 +5,9 @@ from wtforms.validators import DataRequired, Length, NumberRange
 class PlayerForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired(), Length(max=30)])
     skill = SelectField('Skill Level', choices=[
-        ('beginner', 'Beginner'),
-        ('intermediate', 'Intermediate'),
-        ('advanced', 'Advanced')
+        ('Beginner', 'Beginner'),
+        ('Intermediate', 'Intermediate'),
+        ('Advanced', 'Advanced')
     ], validators=[DataRequired()])
     gender = SelectField('Gender', choices=[
         ('male', 'Male'),
