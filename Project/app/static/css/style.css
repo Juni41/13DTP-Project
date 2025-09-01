@@ -3,6 +3,7 @@ body {
     background-color: #191970;
     margin: 20px;
 }
+
 h1, h2, h3, p, a  {
     color: #D3D3D3;
     margin-top: 1.5rem;
@@ -11,7 +12,6 @@ h1, h2, h3, p, a  {
 
 h1 {
     text-align: center;
-    border-bottom: 2px solid #e0e0e0;
     padding-bottom: 1rem;
 }
 
@@ -24,7 +24,7 @@ a:hover {
     text-decoration: underline;
 }
 
-button {
+button, .btn {
     background-color: #483D8B;
     color: white;
     border: none;
@@ -35,10 +35,15 @@ button {
 }
 
 button:hover {
-    background-color: #FF8C00;
+    background-color: #FFD700;
+    color: #191970;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
 }
+
 .btn-primary:hover {
-    background-color: #FF8C00;
+    background-color: #FFD700;
+    color: #191970;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
 }
 /* Player Drafting Form */
 .main-content {
@@ -69,6 +74,7 @@ button:hover {
     border: 1px solid #e0e0e0;
     border-radius: 5px;
     padding: 0.5rem;
+    margin-bottom: 10px;
 }
 
 .player-info {
@@ -88,9 +94,11 @@ button:hover {
 .match-options {
     background-color: #f9f9f9;
     border: 1px solid #e0e0e0;
-    padding: 1.5rem;
-    margin-top: 2rem;
+    padding: 1rem;
+    margin-bottom: 2rem;
     border-radius: 5px;
+    padding-bottom: 6px;
+    text-align: center;
 }
 
 .rest-notice {
@@ -103,6 +111,7 @@ button:hover {
     margin-top: 2rem;
     display: flex; /* Turn it into a flex container */
     flex-direction: column; /* Stack children vertically */
+    margin-bottom: 10px;
 }
 
 .player-name, .player-gender, .player-skill {
@@ -111,14 +120,64 @@ button:hover {
 
 .sort-options {
     color: #E9FFDF;
+    margin-bottom: 10px;
 }
 
 .match-options {
     background-color: #0F0F4F;
 }
 
-.form-group {
-    color: #E9FFDD;
+.form-container {
+    border: 1px solid #e0e0e0;
+    background-color: #E9FFDD;
+    border-radius: 5px;
+    text-align: center;
+    padding-bottom: 2rem;
+}
+
+.form-container {
+    background-color: #0F0F4F;
+}
+
+.form-label {
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: #E9FFDF;
+}
+
+/* Input fields */
+.form-input,
+.form-select{
+  width: 90%;
+  padding: 10px 14px;
+  font-size: 16px;
+  border: 2px solid #191970;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  background-color: #101020;
+  color: #E9FFDF;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Placeholder text */
+.form-input::placeholder {
+  color: #A9A9A9;
+}
+
+/* On focus */
+.form-input:focus,
+.form-select:focus {
+  outline: none;
+  border-color: #FFD700; /* gold accent when clicked */
+  box-shadow: 0 0 6px rgba(255, 215, 0, 0.7);
+}
+
+/* Error text */
+.error-text {
+  margin-top: 5px;
+  font-size: 14px;
+  color: #FF6347;
+  font-weight: 500;
 }
  /* Player Match Display */
  
@@ -145,15 +204,39 @@ button:hover {
     font-size: 14px;
     color: #aaa;
 }
+
 /* About Page Styles */
 
 /* Nav Styles */
+nav {
+    margin-top: 10px;
+}
+
 .nav-style {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    list-style-type: none;
+    list-style: none;
+    margin: 0;
     padding: 0;
+    display: flex;
+    justify-content: center; /* center nav links under title */
+    gap: 30px;
+}
+
+/* Nav links */
+.nav-style li a {
+    color: #FFFFFF;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 500;
+    transition: 0.3s ease;
+    padding: 6px 10px;
+    border-radius: 6px;
+}
+
+/* Hover effect */
+.nav-style li a:hover {
+    background-color: #FFD700;
+    color: #191970;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
 }
 
 /* Error Page Styles */
@@ -162,7 +245,7 @@ button:hover {
     margin: 5rem auto;
     max-width: 600px;
     padding: 2rem;
-    background-color: #fff;
+    background-color: #0F0F4F;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
  }
@@ -177,4 +260,7 @@ button:hover {
     padding: 20px 0;
     margin-bottom: 20px;
     border-radius: 8px;
+    border-bottom: 3px solid #FFD700; /* gold accent line */
+    text-align: center;
+    color: #FFFFFF;
 }
