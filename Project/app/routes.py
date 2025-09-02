@@ -53,7 +53,7 @@ def generate_matches():
         if total_players < required_players:
             return render_template('generated_match.html', form=form, matches=None)
 
-        # Clear previous matches and players aaaaaaaaaaaaaaaaaa
+        # Clear previous matches and players
         CourtPlayer.query.delete()
         Court.query.delete()
         Match.query.delete()

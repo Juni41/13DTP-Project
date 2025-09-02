@@ -25,4 +25,12 @@ class MatchForm(FlaskForm):
         ('skill', 'Balance by Skill'),
         ('gender', 'Balance by Gender')
     ])
+    match_type = RadioField('Matchmaking Type', choices=[
+        ('skill', 'Balanced by Skill (Top players on same court)'),
+        ('mixed', 'Balanced by Skill & Gender (Prioritizes Mixed Teams)'),
+        ('random', 'Purely Random')
+        ],
+        default='random', # Keep 'skill' as the default
+        validators=[DataRequired()]
+    )
     submit = SubmitField('Generate Matches')
