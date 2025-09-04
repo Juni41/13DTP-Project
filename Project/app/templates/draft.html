@@ -5,9 +5,25 @@
 <html>
 <head>
     <title>Badminton Draft</title>
+    <!-- The meta tag for the CSRF token is good practice if you ever re-add AJAX -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <!-- Linking the stylesheet is already handled by layout.html, but keeping it here doesn't hurt -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
+    <h1>Player Draft</h1>
+
+    <!-- Display Flashed Messages (Success/Error banners) -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-messages">
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
     {% if players %}
         <div class="stats">
             <h3>Stats</h3>
@@ -22,15 +38,23 @@
             <!-- Add Player Form -->
             <div class="form-container">
                 <h2>Add New Player</h2>
+
+                {% if player_count < max_players_limit %}
+
                 <form method="POST">
+                    <!-- This 'form' variable is the PlayerForm instance -->
                     {{ form.hidden_tag() }}
+                    
+                    <!-- CRITICAL FIX for sorting: This hidden field remembers the current sort order when adding a new player -->
+                    <input type="hidden" name="sort_by" value="{{ current_sort }}">
+
                     <div class="form-group">
                         {{ form.name.label(class="form-label") }}
                         {{ form.name(class="form-input") }}
                         {% for error in form.name.errors %}
                             <div class="error-text">{{ error }}</div>
                         {% endfor %}
-                    </div>
+                    </div> <!-- form-group -->
                     
                     <div class="form-group">
                         {{ form.skill.label(class="form-label") }}
@@ -38,7 +62,7 @@
                         {% for error in form.skill.errors %}
                             <div class="error-text">{{ error }}</div>
                         {% endfor %}
-                    </div>
+                    </div> <!-- form-group -->
                     
                     <div class="form-group">
                         {{ form.gender.label(class="form-label") }}
@@ -46,33 +70,39 @@
                         {% for error in form.gender.errors %}
                             <div class="error-text">{{ error }}</div>
                         {% endfor %}
-                    </div>
+                    </div> <!-- form-group -->
                     {{ form.submit(class="btn btn-primary") }}
                 </form>
-            </div>
+            {% else %}
+            <div class="limit-reached-message">
+                <p><strong>Roster is full!</strong></p>
+                <p>The maximum limit of {{ max_players_limit }} players has been reached.</p>
+            </div> <!--limit-reached-message-->
+            {% endif %}
+            </div> <!-- form-container -->
 
             <!-- Generate Match Form (Only shows if there are players) -->
-            {% if players %}
+            {% if players and match_form.num_courts.choices %}
                 <div class="match-options">
                     <h3>Generate Match</h3>
+
+                    <!-- THIS FORM IS NOW DYNAMICALLY RENDERED BY THE 'match_form' OBJECT -->
                     <form method="POST" action="{{ url_for('generate_matches') }}">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                        <input type="hidden" name="method" value="random">
                         
-                       <div class="form-group">
-                    <label for="num_courts">Number of Courts (max {{ players|length // 4 }}):</label>
-                        <select name="num_courts" id="num_courts" required class="form-select">
-                            {% set max_courts = players|length // 4 %}
-                                {% for i in range(1, max_courts + 1) %}
-                                <option value="{{ i }}" {% if i == max_courts %}selected{% endif %}>
-                                    {{ i }} court{% if i > 1 %}s{% endif %} ({{ i*4 }} players)
-                                </option>
-                                {% endfor %}
-                            </select>
+                        {{ match_form.hidden_tag() }}
+                        <div class="form-group">
+                            {{ match_form.match_type.label(class="form-label") }}
+                            <div class="radio-group">
+                                {{ match_form.match_type() }}
+                            </div>
                         </div>
-                        <button type="submit" class="btn btn-primary">
-                            Generate Matches
-                        </button>
+                        
+                        <!-- Renders the Dropdown for number of courts -->
+                        <div class="form-group">
+                            {{ match_form.num_courts.label(class="form-label") }}
+                            {{ match_form.num_courts(class="form-select") }}
+                        </div>
+                        {{ match_form.submit(class="btn btn-primary") }}
                     </form>
                     
                     {% if (players|length % 4) > 0 %}
@@ -80,7 +110,7 @@
                             Note: {{ players|length % 4 }} player{% if (players|length % 4) > 1 %}s{% endif %} will be on rest
                         </p>
                     {% endif %}
-                </div> <!-- match-options -->
+                </div>
             {% endif %}
 
         </div> <!-- left-column -->
@@ -98,9 +128,9 @@
                         <button>Gender</button>
                     </a> |
                     <a href="{{ url_for('draft', sort_by='id') }}" class="{{ 'active-sort' if current_sort == 'id' else '' }}">
-                        <button>ID</button>
+                        <button>Default</button>
                     </a>
-                </div> <!-- sort-options -->
+                </div>
 
                 <div class="players-scroll-container">
                     {% for player in players %}
@@ -109,17 +139,16 @@
                                 <span class="player-name">{{ player.name }}</span>
                                 <span class="player-skill">Skill: {{ player.skill|title }}</span>
                                 <span class="player-gender">Gender: {{ player.gender|title }}</span>
-                            </div> <!-- player-info -->
+                            </div>
                             <form method="post" action="{{ url_for('delete_player', player_id=player.id) }}">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                 <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to delete {{ ' '.join(player.name.split()) }}?')">
-
                                     Delete
                                 </button>
                             </form>
-                        </div> <!-- player-container -->
+                        </div>
                     {% endfor %}
-                </div> <!-- players-scroll-container -->
+                </div>
 
             {% else %}
                 <div class="players-missing">

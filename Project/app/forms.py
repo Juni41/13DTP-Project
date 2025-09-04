@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, SubmitField, IntegerField, RadioField
-from wtforms.validators import DataRequired, Length, NumberRange
+from wtforms import StringField, SelectField, SubmitField, RadioField
+from wtforms.validators import DataRequired, Length
 
 class PlayerForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired(), Length(max=30)])
@@ -17,20 +17,16 @@ class PlayerForm(FlaskForm):
     submit = SubmitField('Add Player')
 
 class MatchForm(FlaskForm):
-    num_courts = IntegerField('Number of Courts', validators=[
-        DataRequired(), NumberRange(min=1, message="need at least 1 court")
-    ])
-    method = SelectField('Sorting Method', choices=[
-        ('random', 'Random'),
-        ('skill', 'Balance by Skill'),
-        ('gender', 'Balance by Gender')
-    ])
-    match_type = RadioField('Matchmaking Type', choices=[
-        ('skill', 'Balanced by Skill (Top players on same court)'),
-        ('mixed', 'Balanced by Skill & Gender (Prioritizes Mixed Teams)'),
-        ('random', 'Purely Random')
+    num_courts = SelectField('Number of Courts', coerce=int, validators=[DataRequired()])
+    
+    match_type = RadioField(
+        'Matchmaking Type', 
+        choices=[
+            ('skill', 'Balanced by Skill (Top players on same court)'),
+            ('mixed', 'Balanced by Skill & Gender (Prioritizes Mixed Teams)'),
+            ('random', 'Purely Random')
         ],
-        default='random', # Keep 'skill' as the default
+        default='skill', # Set a sensible default
         validators=[DataRequired()]
     )
     submit = SubmitField('Generate Matches')
