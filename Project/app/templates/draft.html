@@ -5,15 +5,10 @@
 <html>
 <head>
     <title>Badminton Draft</title>
-    <!-- The meta tag for the CSRF token is good practice if you ever re-add AJAX -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <!-- Linking the stylesheet is already handled by layout.html, but keeping it here doesn't hurt -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <h1>Player Draft</h1>
-
-    <!-- Display Flashed Messages (Success/Error banners) -->
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         <div class="flash-messages">
@@ -42,10 +37,7 @@
                 {% if player_count < max_players_limit %}
 
                 <form method="POST">
-                    <!-- This 'form' variable is the PlayerForm instance -->
                     {{ form.hidden_tag() }}
-                    
-                    <!-- CRITICAL FIX for sorting: This hidden field remembers the current sort order when adding a new player -->
                     <input type="hidden" name="sort_by" value="{{ current_sort }}">
 
                     <div class="form-group">
@@ -85,8 +77,6 @@
             {% if players and match_form.num_courts.choices %}
                 <div class="match-options">
                     <h3>Generate Match</h3>
-
-                    <!-- THIS FORM IS NOW DYNAMICALLY RENDERED BY THE 'match_form' OBJECT -->
                     <form method="POST" action="{{ url_for('generate_matches') }}">
                         
                         {{ match_form.hidden_tag() }}
@@ -96,8 +86,6 @@
                                 {{ match_form.match_type() }}
                             </div>
                         </div>
-                        
-                        <!-- Renders the Dropdown for number of courts -->
                         <div class="form-group">
                             {{ match_form.num_courts.label(class="form-label") }}
                             {{ match_form.num_courts(class="form-select") }}
@@ -134,7 +122,7 @@
 
                 <div class="players-scroll-container">
                     {% for player in players %}
-                        <div class="player-container">
+                        <div class="player-container skill-{{ player.skill|lower }}">
                             <div class="player-info">
                                 <span class="player-name">{{ player.name }}</span>
                                 <span class="player-skill">Skill: {{ player.skill|title }}</span>

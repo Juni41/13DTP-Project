@@ -1,4 +1,5 @@
 /* Universal Styles */
+/* In static/css/style.css */
 
 @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
@@ -37,7 +38,7 @@ button, .btn {
     padding: 7px 14px;
     border-radius: 6px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
 }
 
 button:hover {
@@ -51,7 +52,49 @@ button:hover {
     color: #191970;
     box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
 }
+
 /* Player Drafting Form */
+.player-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #0F0F4F; /* Gives the card a solid background */
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    border-radius: 8px; /* Soft rounded corners */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Subtle shadow for depth */
+    border-left: 5px solid #3498db; /* Accent color border */
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.player-container:hover {
+    transform: translateY(-3px); /* Lifts the card on hover */
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+
+/* Give the accent border a different color based on skill */
+.player-container.skill-beginner { border-left-color: #2ecc71; }
+.player-container.skill-intermediate { border-left-color: #f1c40f; }
+.player-container.skill-advanced { border-left-color: #e74c3c; }
+
+.limit-reached-message {
+    color: #e74c3c;
+    font-weight: bold;
+    margin-top: 1rem;
+}
+
+.stats {
+    border: 1px solid #e0e0e0;
+    font-family: 'Courier New', Courier, monospace;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    border-radius: 5px;
+}
+
+.stats p, h3 {
+    color: #E9FFDF;
+}
+
 .main-content {
     display: flex;
     align-items: flex-start; 
@@ -180,6 +223,12 @@ button:hover {
   box-shadow: 0 0 6px rgba(255, 215, 0, 0.7);
 }
 
+.radio-group {
+    font-family: 'Courier New', Courier, monospace;
+    color: #E9FFDF;
+    margin-bottom: 10px;
+    text-align: left;
+}
  /* Player Match Display */
  
 /* Footer styles */
@@ -211,6 +260,7 @@ button:hover {
 }
 
 .footer-bottom p {
+    font-family: 'Courier New', Courier, monospace;
     color: #E9FFDF;
 }
 
@@ -218,6 +268,7 @@ button:hover {
 
 /* Nav Styles */
 nav {
+    margin-bottom: 20px;
     margin-top: 10px;
 }
 
