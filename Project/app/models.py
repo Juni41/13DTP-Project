@@ -1,4 +1,5 @@
 from app import db
+from datetime import datetime
 
 class Player(db.Model):
     __tablename__ = 'player'
@@ -14,8 +15,8 @@ class Match(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     num_courts = db.Column(db.Integer, nullable=False)
 
-    # Each match has many courts
-    courts = db.relationship('Court', back_populates='match', cascade='all, delete-orphan')
+    created_at = db.Column(db.DateTime, index=True, default=datetime.utcnow) # Get creation time for saving match
+    courts = db.relationship('Court', back_populates='match', cascade='all, delete-orphan') # Each match has many courts
 
 class Court(db.Model):
     __tablename__ = 'court'

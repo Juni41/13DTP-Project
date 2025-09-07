@@ -19,13 +19,11 @@
       {% endif %}
     {% endwith %}
 
-    {% if players %}
-        <div class="stats">
-            <h3>Stats</h3>
-            <p><strong>Players Entered:</strong> {{ players|length }} </p>
-            <p><strong>Maximum Courts Possible:</strong> {{ (players|length // 4) }} (need 4 players per court)</p>
-        </div>
-    {% endif %}
+    <div class="stats">
+        <h3>Stats</h3>
+        <p><strong>Players Entered:</strong> {{ player_count }} / {{ max_players_limit }}</p>
+        <p><strong>Maximum Courts Possible:</strong> {{ (players|length // 4) }}</p>
+    </div>
 
     <div class="main-content">
         <div class="left-column">
@@ -35,50 +33,49 @@
                 <h2>Add New Player</h2>
 
                 {% if player_count < max_players_limit %}
+                    <!-- --- FIX 1: ADDED EXPLICIT ACTION ATTRIBUTE --- -->
+                    <!-- This tells the browser to POST this specific form back to the 'draft' route. -->
+                    <form method="POST" action="{{ url_for('draft') }}">
+                        {{ form.hidden_tag() }}
+                        <input type="hidden" name="sort_by" value="{{ current_sort }}">
 
-                <form method="POST">
-                    {{ form.hidden_tag() }}
-                    <input type="hidden" name="sort_by" value="{{ current_sort }}">
+                        <div class="form-group">
+                            {{ form.name.label(class="form-label") }}
+                            {{ form.name(class="form-input") }}
+                            {% for error in form.name.errors %}
+                                <div class="error-text">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="form-group">
+                            {{ form.skill.label(class="form-label") }}
+                            {{ form.skill(class="form-select") }}
+                            {% for error in form.skill.errors %}
+                                <div class="error-text">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="form-group">
+                            {{ form.gender.label(class="form-label") }}
+                            {{ form.gender(class="form-select") }}
+                            {% for error in form.gender.errors %}
+                                <div class="error-text">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        {{ form.submit(class="btn btn-primary") }}
+                    </form>
+                {% else %}
+                    <div class="limit-reached-message">
+                        <p><strong>Roster is full!</strong></p>
+                        <p>The maximum limit of {{ max_players_limit }} players has been reached.</p>
+                    </div>
+                {% endif %}
+            </div>
 
-                    <div class="form-group">
-                        {{ form.name.label(class="form-label") }}
-                        {{ form.name(class="form-input") }}
-                        {% for error in form.name.errors %}
-                            <div class="error-text">{{ error }}</div>
-                        {% endfor %}
-                    </div> <!-- form-group -->
-                    
-                    <div class="form-group">
-                        {{ form.skill.label(class="form-label") }}
-                        {{ form.skill(class="form-select") }}
-                        {% for error in form.skill.errors %}
-                            <div class="error-text">{{ error }}</div>
-                        {% endfor %}
-                    </div> <!-- form-group -->
-                    
-                    <div class="form-group">
-                        {{ form.gender.label(class="form-label") }}
-                        {{ form.gender(class="form-select") }}
-                        {% for error in form.gender.errors %}
-                            <div class="error-text">{{ error }}</div>
-                        {% endfor %}
-                    </div> <!-- form-group -->
-                    {{ form.submit(class="btn btn-primary") }}
-                </form>
-            {% else %}
-            <div class="limit-reached-message">
-                <p><strong>Roster is full!</strong></p>
-                <p>The maximum limit of {{ max_players_limit }} players has been reached.</p>
-            </div> <!--limit-reached-message-->
-            {% endif %}
-            </div> <!-- form-container -->
-
-            <!-- Generate Match Form (Only shows if there are players) -->
-            {% if players and match_form.num_courts.choices %}
+            {% if match_form.num_courts.choices %}
                 <div class="match-options">
                     <h3>Generate Match</h3>
                     <form method="POST" action="{{ url_for('generate_matches') }}">
-                        
                         {{ match_form.hidden_tag() }}
                         <div class="form-group">
                             {{ match_form.match_type.label(class="form-label") }}
