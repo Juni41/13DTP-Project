@@ -2,52 +2,55 @@
 {% block content %}
 
 <body>
-    {% if matches %}
-        {% for match in matches %}
-            {% for court in match.courts %}
-                <ul class="court">
-                    <li class="court-title">Court {{ court.court_number }}</li>
-                    {% set players = court.court_players | sort(attribute='id') %}
-                    <li class="team">
-                        <div class="team-info">
-                            <strong>Team 1:</strong>
-                            {{ players[0].player.name if players|length > 0 else '—' }} &
-                            {{ players[1].player.name if players|length > 1 else '—' }}
-                        </div>
-                        <div class="declare-button">
-                            {% if court.winning_team is none %}
-                                <form method="POST" action="{{ url_for('set_winner', court_id=court.id, team_number=1) }}">
-                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                                    <button type="submit" class="winner-btn">Declare Winner</button>
-                                </form>
-                            {% elif court.winning_team == 1 %}
-                                <span class="winner">Winner</span>
-                            {% endif %}
-                        </div>
-                    </li>
+    <h1>Match from {{ match.created_at.strftime('%Y-%m-%d %H:%M') }}</h1>
+    {% if match and match.courts %}
+        {% for court in match.courts %}
+            <ul class="court">
+                <li class="court-title">Court {{ court.court_number }}</li>
+                {% set players = court.court_players | sort(attribute='id') %}
+                
+                <!-- Team 1 Display -->
+                <li class="team">
+                    <div class="team-info">
+                        <strong>Team 1:</strong>
+                        {{ players[0].player.name if players|length > 0 else '—' }} &
+                        {{ players[1].player.name if players|length > 1 else '—' }}
+                    </div>
+                    <div class="declare-button">
+                        {% if court.winning_team is none %}
+                            <form method="POST" action="{{ url_for('set_winner', court_id=court.id, team_number=1) }}">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                <button type="submit" class="winner-btn">Declare Winner</button>
+                            </form>
+                        {% elif court.winning_team == 1 %}
+                            <span class="winner-badge"> Winner</span>
+                        {% endif %}
+                    </div>
+                </li>
 
-                    <li class="team">
-                        <div class="team-info">
-                            <strong>Team 2:</strong>
-                            {{ players[2].player.name if players|length > 2 else '—' }} &
-                            {{ players[3].player.name if players|length > 3 else '—' }}
-                        </div>
-                        <div class="declare-button">
-                            {% if court.winning_team is none %}
-                                <form method="POST" action="{{ url_for('set_winner', court_id=court.id, team_number=2) }}">
-                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                                    <button type="submit" class="winner-btn">Declare Winner</button>
-                                </form>
-                            {% elif court.winning_team == 2 %}
-                                <span class="winner">Winner</span>
-                            {% endif %}
-                        </div>
-                    </li>
-                </ul>
-            {% endfor %}
+                <!-- Team 2 Display -->
+                <li class="team">
+                    <div class="team-info">
+                        <strong>Team 2:</strong>
+                        {{ players[2].player.name if players|length > 2 else '—' }} &
+                        {{ players[3].player.name if players|length > 3 else '—' }}
+                    </div>
+                    <div class="declare-button">
+                        {% if court.winning_team is none %}
+                            <form method="POST" action="{{ url_for('set_winner', court_id=court.id, team_number=2) }}">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                <button type="submit" class="winner-btn">Declare Winner</button>
+                            </form>
+                        {% elif court.winning_team == 2 %}
+                            <span class="winner-badge"> Winner</span>
+                        {% endif %}
+                    </div>
+                </li>
+            </ul>
         {% endfor %}
+        
         <div class="resting-players">
-            <h2>Resting Players</h2>
+            <h2>Players on Rest</h2>
             {% if resting_players %}
                 <ul>
                     {% for player in resting_players %}
@@ -55,14 +58,17 @@
                     {% endfor %}
                 </ul>
             {% else %}
-                <p>No players are resting.</p>
+                <p>No players were resting for this match.</p>
             {% endif %}
+        </div>
 
     {% else %}
-        <p>No matches have been generated yet.</p>
+        <p>There is no match data to display. Please generate a match from the draft page.</p>
     {% endif %}
 
     <br>
-    <a href="{{ url_for('draft') }}" class="btn">Back to Draft</a>
+    <a href="{{ url_for('match_history') }}" class="btn">View All History</a>
+    <a href="{{ url_for('draft') }}" class="back-to-draft-btn">Back to Draft</a>
 </body>
+
 {% endblock %}
