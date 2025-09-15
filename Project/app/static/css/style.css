@@ -68,6 +68,47 @@ button:hover {
     color: #191970;
     box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
 }
+/* Popup Notifications */
+#toast-container {
+    position: fixed;
+    bottom: 2rem;
+    left: 85%;
+    transform: translateX(-50%);
+    z-index: 1050;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.toast { 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Courier New', Courier, monospace
+    padding: 0.75rem 1.5rem;
+    border-radius: 2rem; /* Pill shape */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    color: #fff;
+    min-width: 300px;
+    text-align: center;
+    font-size: 0.95em;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(100px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.toast.show { /* When the popup is visible */
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/*  Different colors for different message types */
+.toast--success { background-color: #2ecc71; }
+.toast--error { background-color: #e74c3c; }
+.toast--warning { background-color: #f39c12; color: #333; }
+.toast--info, .toast { background-color: #34495e; }
 
 /* Player Drafting Form */
 .player-container {

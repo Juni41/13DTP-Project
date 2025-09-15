@@ -21,6 +21,39 @@
   
     <footer class="site-footer">
         {% include 'Footer.html' %}
-      </footer>  
+      </footer> 
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div id="toast-container">
+          {% for category, message in messages %}
+            <div class="toast toast--{{ category }}" role="alert">
+              {{ message | safe }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <script> // JavaScript to handle popup notifications.
+        document.addEventListener('DOMContentLoaded', function () {
+            const toasts = document.querySelectorAll('.toast');
+            toasts.forEach((toast, index) => {
+                setTimeout(() => {
+                    toast.classList.add('show'); // Using show class to trigger CSS animation.
+                    const hideTimeout = setTimeout(() => { //  Set a timer to hide it after 5 seconds.
+                        toast.classList.remove('show');
+                        toast.addEventListener('transitionend', () => toast.remove()); // After the fade-out animation is complete, remove the element.
+                    }, 3000);
+
+                    toast.addEventListener('click', () => {  // Allow the user to click to dismiss it early.
+                        clearTimeout(hideTimeout); // Stop the auto-hide timer.
+                        toast.classList.remove('show');
+                        toast.addEventListener('transitionend', () => toast.remove());
+                    }, { once: true });
+                }, index * 400);
+            });
+        });
+    </script>
 </body>
 </html>
