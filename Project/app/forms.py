@@ -23,7 +23,7 @@ class MatchForm(FlaskForm):
         'Matchmaking Type', 
         choices=[
             ('skill', 'Balanced by Skill (Top players on same court)'),
-            ('mixed', 'Balanced by Skill & Gender (Prioritizes Mixed Teams)'),
+            ('mixed', 'Balanced by Gender (Prioritizes Mixed Teams)'),
             ('random', 'Purely Random')
         ],
         default='skill', # Set a sensible default
