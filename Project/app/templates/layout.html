@@ -28,7 +28,7 @@
         <div id="toast-container">
           {% for category, message in messages %}
             <div class="toast toast--{{ category }}" role="alert">
-              {{ message | safe }}
+              {{ message }}
             </div>
           {% endfor %}
         </div>
