@@ -9,15 +9,11 @@ from app.matchmaking import create_skill_based_matches, create_random_matches, c
 def layout():
     return render_template("home.html")
 
-@app.route('/about')
-def about():
-    return render_template("about.html")
-
 @app.route('/draft', methods=['GET', 'POST'])
 def draft():
     player_form = PlayerForm()
     match_form = MatchForm()
-    MAX_PLAYERS = 12
+    MAX_PLAYERS = app.config['MAX_PLAYERS']
     current_player_count = Player.query.count()
 
     if player_form.validate_on_submit(): # Backend enforcement of player limit even if frontend is bypassed.
@@ -78,43 +74,155 @@ def draft():
 @app.route('/generate_matches', methods=['POST'])
 def generate_matches():
     form = MatchForm()
-    players = Player.query.all()
-    max_courts = len(players) // 4
+    players_in_draft = Player.query.all()
+    max_courts = len(players_in_draft) // 4
     form.num_courts.choices = [(i, str(i)) for i in range(1, max_courts + 1)]
 
     if form.validate_on_submit():
         num_courts = form.num_courts.data
         match_type = form.match_type.data
 
+        if match_type == 'mixed':
+            # Check the roster for the minimum number of players of each gender.
+            males_count = Player.query.filter_by(gender='male').count()
+            females_count = Player.query.filter_by(gender='female').count()
+            
+            # Need at least 2 of each to form one court of mixed teams.
+            if males_count < 2 or females_count < 2:
+                flash("Cannot generate mixed match. You need at least 2 male and 2 female players.", "error")
+                return redirect(url_for('draft'))
+            
         if match_type == 'skill':
-            match_data = create_skill_based_matches(players, num_courts)
+            match_data = create_skill_based_matches(players_in_draft, num_courts)
         elif match_type == 'mixed':
-            match_data = create_mixed_gender_matches(players, num_courts)
+            match_data = create_mixed_gender_matches(players_in_draft, num_courts)
         else: # 'random'
-            match_data = create_random_matches(players, num_courts)
+            match_data = create_random_matches(players_in_draft, num_courts)
 
         if not match_data:
             flash("Not enough players to generate any courts.", "warning")
             return redirect(url_for('draft'))
-        
-        new_match = Match(num_courts=len(match_data)) # Create the parent Match object.
-        db.session.add(new_match)
-        db.session.flush() # Flush to get the ID for the new_match
 
-        for data in match_data: # Loop through the court data and create Court and CourtPlayer records.
+
+        player_ids_in_match = {p_obj.id for d in match_data for p_obj in d['team1']+d['team2']}
+        
+        # Find the Player objects for those who are on rest.
+        resting_players_objects = [p for p in players_in_draft if p.id not in player_ids_in_match]
+
+        # Get their names.
+        resting_players_names = [p.name for p in resting_players_objects]
+        
+        # Join the names into a single string to be saved in the database.
+        resting_players_str = ",".join(resting_players_names)
+        
+        player_ids_str = ",".join([str(p.id) for p in players_in_draft])
+        new_match = Match(
+            num_courts=len(match_data),
+            match_type=match_type,
+            player_ids_snapshot=player_ids_str,
+            resting_players_snapshot=resting_players_str
+        )
+        new_match.roster = players_in_draft
+        db.session.add(new_match)
+        db.session.flush()
+
+        for data in match_data:
             court = Court(court_number=data['court'], match_id=new_match.id)
             db.session.add(court)
-            db.session.flush() # Flush to get the ID for the new court
+            db.session.flush()
 
-            for player in data['team1'] + data['team2']:
-                db.session.add(CourtPlayer(court_id=court.id, player_id=player.id))
+            for player_object in data['team1'] + data['team2']:
+                court_player_link = CourtPlayer(
+                    court_id=court.id,
+                    player_id=player_object.id,
+                    player_name=player_object.name
+                )
+                db.session.add(court_player_link)
         db.session.commit()
         
-        flash("New match generated successfully!", "success") 
+        flash("New match generated successfully!", "success")
+        try:
+            history_limit = app.config['MAX_MATCHES']
+            all_matches = Match.query.order_by(Match.created_at.asc()).all()
+
+            if len(all_matches) > history_limit:
+                matches_to_delete_count = len(all_matches) - history_limit
+                
+                # Get the specific match objects to be deleted from the start of the list.
+                matches_to_delete = all_matches[:matches_to_delete_count]
+                print(f"INFO: Match history limit ({history_limit}) exceeded. Deleting {len(matches_to_delete)} oldest match(es).")
+                
+                for old_match in matches_to_delete:
+                    db.session.delete(old_match)
+                    
+                db.session.commit()
+                flash(f"{len(matches_to_delete)} oldest match(es) pruned from history.", "info")
+
+        except Exception as e:
+            db.session.rollback()
+            print(f"ERROR: Could not prune match history. Error: {e}")
+            flash("Could not prune old match history.", "error")
         return redirect(url_for('view_match_details', match_id=new_match.id))
-    
-    flash("There was an error with your match request. Please try again.", "error") # Runs if form validation fails.
+
+    flash("There was an error with your match request.", "error")
     return redirect(url_for('draft'))
+
+@app.route('/regenerate_match/<int:previous_match_id>', methods=['POST'])
+def regenerate_match(previous_match_id):
+    previous_match = Match.query.get_or_404(previous_match_id)
+    players_for_rematch = previous_match.roster
+    
+    # Get the other settings from the old match.
+    num_courts = previous_match.num_courts
+    match_type = previous_match.match_type
+
+    # Check if there are still enough players to create the match.
+    if len(players_for_rematch) < num_courts * 4:
+        flash("Cannot regenerate: not enough of the original players still exist.", "warning")
+        return redirect(url_for('view_match_details', match_id=previous_match_id))
+    
+    if match_type == 'skill':
+        match_data = create_skill_based_matches(players_for_rematch, num_courts)
+    elif match_type == 'mixed':
+        match_data = create_mixed_gender_matches(players_for_rematch, num_courts)
+    else: # 'random'
+        match_data = create_random_matches(players_for_rematch, num_courts)
+
+    if not match_data:
+        flash("Could not regenerate pairings with the original settings.", "warning")
+        return redirect(url_for('view_match_details', match_id=previous_match_id))
+
+    # Create and save the new match with the new results and snapshots.
+    player_ids_in_match = {p_obj.id for d in match_data for p_obj in d['team1']+d['team2']}
+    resting_players = [p.name for p in players_for_rematch if p.id not in player_ids_in_match]
+
+    new_match = Match(
+        num_courts=len(match_data),
+        match_type=match_type,
+        player_ids_snapshot=",".join([str(p.id) for p in players_for_rematch]),
+        resting_players_snapshot=",".join(resting_players)
+    )
+    new_match.roster = players_for_rematch # Save the same historical roster for the new match.
+    db.session.add(new_match)
+    db.session.flush()
+
+    # Loop through and save the new court and player link data.
+    for data in match_data:
+        court = Court(court_number=data['court'], match_id=new_match.id)
+        db.session.add(court)
+        db.session.flush()
+        for player_object in data['team1'] + data['team2']:
+            court_player_link = CourtPlayer(
+                court_id=court.id,
+                player_id=player_object.id,
+                player_name=player_object.name
+            )
+            db.session.add(court_player_link)
+
+    db.session.commit()
+
+    flash("Match was regenerated with a full reshuffle!", "success")
+    return redirect(url_for('view_match_details', match_id=new_match.id))
 
 @app.route('/history')
 def match_history():
@@ -124,9 +232,10 @@ def match_history():
 @app.route('/match/<int:match_id>')
 def view_match_details(match_id):
     match = Match.query.get_or_404(match_id)
-    player_ids_in_match = {cp.player_id for court in match.courts for cp in court.court_players}
-    resting_players = [p for p in Player.query.all() if p.id not in player_ids_in_match]
-    return render_template('generated_match.html', match=match, resting_players=resting_players)
+    resting_players_names = []
+    if match.resting_players_snapshot:
+        resting_players_names = match.resting_players_snapshot.split(',')
+    return render_template('generated_match.html', match=match, resting_players=resting_players_names)
 
 @app.route('/set_winner/<int:court_id>/<int:team_number>', methods=['POST'])
 def set_winner(court_id, team_number):

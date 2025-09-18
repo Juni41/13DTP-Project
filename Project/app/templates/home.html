@@ -1,12 +1,19 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<head>
-    <title>Home Page</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"
-</head>
-<body>
-    
-</body>
-</html>
+
+<div class="home-container">
+    <div class="hero-section">
+        <h1>Badminton Match Generator</h1>
+        <p class="tagline">
+            Create balanced and varied teams in seconds.
+            <br>
+            Spend less time organizing and more time on the court.
+        </p>
+        <div class="hero-actions">
+            <a href="{{ url_for('draft') }}" class="btn btn-primary btn-large">Start Drafting Now</a>
+        </div>
+    </div>
+</div> <!-- home-container -->
+
 {% endblock %}

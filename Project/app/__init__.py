@@ -6,6 +6,8 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = '12345'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///draft.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['MAX_PLAYERS'] = 32
+app.config['MAX_MATCHES'] = 10
 
 db = SQLAlchemy(app)
 csrf = CSRFProtect(app)
@@ -15,3 +17,4 @@ from app import routes, models
 # create db tables
 with app.app_context():
     db.create_all()
+    

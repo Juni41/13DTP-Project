@@ -2,14 +2,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 body {
-    font-family: 'Courier New', Courier, monospace;
+    font-family: 'Courier Prime', monospace;
     background-color: #191970;
     margin: 20px;
 }
 
 h1, h2, h3, p, a  {
-    font-family: 'Courier New', Courier, monospace;
-    color: #D3D3D3;
+    font-family: 'Courier Prime', monospace;
+    color: #E9FFDB;
     margin-top: 1.5rem;
     margin-bottom: 1rem;
 }
@@ -20,6 +20,7 @@ h1 {
 }
 
 a {
+    font-family: 'Courier Prime', monospace;
     color: #3498db;
     text-decoration: none;
 }
@@ -27,8 +28,9 @@ a {
 a:hover {
     text-decoration: underline;
 }
+
  .back-to-draft-btn {
-    font-family: 'Courier New', Courier, monospace;
+    font-family: 'Courier Prime', monospace;
     background-color: #483D8B;
     color: white;
     border: none;
@@ -41,7 +43,7 @@ a:hover {
  }
 
 button, .btn {
-    font-family: 'Courier New', Courier, monospace;
+    font-family: 'Courier Prime', monospace;
     background-color: #483D8B;
     color: white;
     border: none;
@@ -71,44 +73,74 @@ button:hover {
 /* Popup Notifications */
 #toast-container {
     position: fixed;
-    bottom: 2rem;
-    left: 85%;
-    transform: translateX(-50%);
-    z-index: 1050;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
+    gap: 10px;
+    align-items: flex-end;
 }
 
-.toast { 
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-family: 'Courier New', Courier, monospace
-    padding: 0.75rem 1.5rem;
-    border-radius: 2rem; /* Pill shape */
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    color: #fff;
-    min-width: 300px;
-    text-align: center;
-    font-size: 0.95em;
+/* Single toast message */
+.toast {
+    color: #E9FFDF;
+    padding: 12px 20px;
+    border-radius: 8px;
+    min-width: 280px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    font-family: sans-serif;
+    font-size: 16px;
     cursor: pointer;
-    opacity: 0;
-    transform: translateY(100px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
+    
+    /* Animation properties */
+    opacity: 0; /* Start fully transparent */
+    transform: translateX(100%); /* Start off-screen to the right */
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out; /* Smooth transition for slide-in/out */
 }
 
-.toast.show { /* When the popup is visible */
+/* When toast is visible */
+.toast.show {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateX(0);
 }
 
-/*  Different colors for different message types */
-.toast--success { background-color: #2ecc71; }
-.toast--error { background-color: #e74c3c; }
-.toast--warning { background-color: #f39c12; color: #333; }
-.toast--info, .toast { background-color: #34495e; }
+/* Category-Specific Colors & Icons */
+.toast--success {
+    background-color: #28a745;
+}
+.toast--success::before {
+    content: '✓ ';
+    font-weight: bold;
+}
+
+.toast--error {
+    background-color: #dc3545;
+}
+
+.toast--error::before {
+    content: '✗ ';
+    font-weight: bold;
+}
+
+.toast--warning {
+    background-color: #ffc107;
+    color: #333;
+}
+
+.toast--warning::before {
+    content: '⚠ ';
+    font-weight: bold;
+}
+
+.toast--info {
+    background-color: #17a2b8;
+}
+
+.toast--info::before {
+    content: 'ℹ ';
+    font-weight: bold;
+}
 
 /* Player Drafting Form */
 .player-container {
@@ -176,7 +208,7 @@ button:hover {
 
 .players-scroll-container {
     max-height: 600px;
-    overflow-y: auto; /* Adds a scrollbar only when needed */
+    overflow-y: auto;
     border: 1px solid #e0e0e0;
     border-radius: 5px;
     padding: 0.5rem;
@@ -215,8 +247,8 @@ button:hover {
 
 .player-list {
     margin-top: 2rem;
-    display: flex; /* Turn it into a flex container */
-    flex-direction: column; /* Stack children vertically */
+    display: flex;
+    flex-direction: column;
     margin-bottom: 10px;
 }
 
@@ -250,6 +282,197 @@ button:hover {
     font-size: 16px;
     margin-bottom: 10px;
     color: #E9FFDF;
+}
+
+/* generated match styling */
+.resting-players {
+    font-family: 'Courier Prime', monospace;
+    color: #E9FFDF;
+}
+
+.team-info span.player-name-display {
+    font-family: 'Courier Prime', monospace;
+    color: #E9FFDF;
+}
+
+.team-info {
+    color: #E9FFDF;
+}
+/* Individual courts */
+.courts-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
+    padding: 1rem 0;
+}
+/* Style for a single court card */
+.court-card {
+    background-color: #0F0F4F;
+    border: 1px solid #e0e0e0;
+    border-top: 5px solid #FFD700;
+    border-radius: 8px;
+    padding: 1rem;
+    
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 400px;
+    max-width: 500px;
+}
+
+.court-card .court-title {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #E9FFDF;
+    padding-bottom: 0.5rem;
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.court-card .team {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    font-size: 1em;
+}
+
+.court-card .player-name-display {
+    font-weight: 500;
+}
+
+.court-card .winner-badge {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8em;
+}
+
+.player-name-display {
+    font-family: 'Courier New', Courier, monospace;
+    color: #E9FFDF;
+}
+.team {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    list-style-type: none;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.team:last-of-type {
+    border-bottom: none;
+}
+
+.team-info {
+    font-size: 1.1em;
+    color: #E9FFDF;
+}
+
+.team-info strong {
+    margin-right: 0.5rem;
+    color: #E9FFDF;
+}
+
+.player-name-display {
+    font-weight: 500;
+}
+
+.winner-btn {
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 0.9em;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.winner-btn:hover {
+    background-color: #27ae60;
+    transform: scale(1.05);
+}
+
+.winner-badge {
+    background-color: #f1c40f;
+    color: #333;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 0.9em;
+    display: inline-block;
+}
+
+.page-actions {
+    margin: 2rem 0;
+}
+.regen-button {
+    margin-bottom: 20px;
+    font-family: 'Courier Prime', monospace;
+}
+.action-form {
+    margin: 0;
+}
+
+/* Match history */
+.match-history-container {
+    font-family: 'Courier Prime', monospace;
+    color: #E9FFDF;
+}
+
+.history-list {
+    list-style-type: none;
+    padding: 0;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* Individual match item in the list */
+.history-item {
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    background-color: #0F0F4F;
+    color: #E9FFDF;
+}
+
+.history-item span.match-date, span.match-info {
+    font-family: 'Courier Prime', monospace;
+    color: #E9FFDF;
+}
+
+/* Hover effect for the match item */
+.history-item:hover {
+    transform: translateY(-3px); /* Lift the card up slightly */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* The link that wraps the content of a match item */
+.history-item a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Style for the main match info */
+.match-info {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Message shown when no matches exist */
+.history-list + p {
+    text-align: center;
+    color: #777;
+    font-size: 1.1em;
+    margin-top: 50px;
 }
 
 /* Input fields */
@@ -286,7 +509,7 @@ button:hover {
     margin-bottom: 10px;
     text-align: left;
 }
- /* Player Match Display */
+
 /* Player Match History */
 .history-list {
     margin-bottom: 2rem;
@@ -296,6 +519,7 @@ button:hover {
 }
 /* Footer styles */
 .footer-content {
+    font-family: 'Courier Prime', monospace;
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
@@ -316,19 +540,9 @@ button:hover {
     color: #E9FFDF;
 }
 
-.footer-bottom {
-    text-align: center;
-    padding-top: 20px;
-    font-size: 14px;
-    color: #aaa;
+.footer-section, li {
+    font-family: 'Courier Prime', monospace;
 }
-
-.footer-bottom p {
-    font-family: 'Courier New', Courier, monospace;
-    color: #E9FFDF;
-}
-
-/* About Page Styles */
 
 /* Nav Styles */
 nav {
@@ -392,4 +606,45 @@ nav {
     border-bottom: 3px solid #FFD700; /* gold accent line */
     text-align: center;
     color: #FFFFFF;
+}
+
+/* --- Main container for centering content --- */
+.home-container {
+    max-width: 1000px;
+    margin: 2rem auto; /* Centers the container on the page */
+    padding: 1rem;
+}
+
+/* --- Hero Section (Top part of the page) --- */
+.hero-section {
+    text-align: center;
+    padding: 3rem 1rem;
+    margin-bottom: 3rem;
+    background-color: #0F0F4F;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.hero-section h1 {
+    font-size: 2.5em;
+    color: #E9FFDB;
+    margin-bottom: 0.5rem;
+}
+
+.hero-section .tagline {
+    font-size: 1.2em;
+    color: #E9FFDB;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.hero-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.btn.btn-large {
+    font-size: 1.1em;
+    padding: 0.9rem 2rem;
 }
