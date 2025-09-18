@@ -304,17 +304,12 @@ def view_match_details(match_id):
 @app.route('/set_winner/<int:court_id>/<int:team_number>', methods=['POST'])
 def set_winner(court_id, team_number):
     court = Court.query.get_or_404(court_id)
-    # This checks if the 'winning_team' attribute on the 'court' object is currently empty (None).
-    # This prevents overwriting a winner that has already been set.
-    if court.winning_team is None:
-        # If no winner has been set, this line updates the 'winning_team' attribute of the 'court' object with the 'team_number' from the URL.
-        court.winning_team = team_number
-        db.session.commit()
-        flash(f'Team {team_number} declared winner for Court {court.court_number}!', 'success')
-    else:
-        flash('A winner has already been declared for this court.', 'warning')
+    court.winning_team = team_number
+    db.session.commit()
+    
+    flash(f'Updated winner for Court {court.court_number} to Team {team_number}!', 'success')
+    
     return redirect(url_for('view_match_details', match_id=court.match_id))
-
 @app.route('/delete_player/<int:player_id>', methods=['POST'])
 def delete_player(player_id):
     player = Player.query.get_or_404(player_id)
