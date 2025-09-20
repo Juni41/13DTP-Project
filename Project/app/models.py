@@ -28,7 +28,6 @@ class Match(db.Model):
     courts = db.relationship('Court', back_populates='match', cascade='all, delete-orphan')
 
 class Court(db.Model):
-    """Represents a single court within a specific match."""
     __tablename__ = 'court'
     id = db.Column(db.Integer, primary_key=True)
     match_id = db.Column(db.Integer, db.ForeignKey('match.id'), nullable=False)
